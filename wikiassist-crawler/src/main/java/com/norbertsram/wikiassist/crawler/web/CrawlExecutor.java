@@ -18,11 +18,11 @@ final class CrawlExecutor {
 
     public static int NUMBER_OF_CRAWLERS = 8;
 
-    public static void crawl(String pageUrl, Predicate<String> doVisit, Consumer<WikipediaPage> visited) throws Exception {
-        crawl(pageUrl, doVisit, visited, NUMBER_OF_CRAWLERS);
+    public static void crawl(String pageUrl, Consumer<WikipediaPage> visited) throws Exception {
+        crawl(pageUrl, visited, NUMBER_OF_CRAWLERS);
     }
 
-    public static void crawl(String pageUrl, Predicate<String> doVisit, Consumer<WikipediaPage> visited, int numCrawlers) throws Exception {
+    public static void crawl(String pageUrl, Consumer<WikipediaPage> visited, int numCrawlers) throws Exception {
         Objects.requireNonNull(pageUrl);
         if (numCrawlers <= 0) {
             throw new IllegalArgumentException("Number of crawlers must be greater than 1, got: " + numCrawlers);
@@ -45,7 +45,7 @@ final class CrawlExecutor {
         final CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
         controller.addSeed(pageUrl);
-        controller.startNonBlocking(() -> new HtmlCrawler(doVisit, visited), numCrawlers);
+        controller.startNonBlocking(() -> new HtmlCrawler(visited), numCrawlers);
     }
 
 }

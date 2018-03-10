@@ -16,25 +16,19 @@ import java.util.stream.Collectors;
 
 /**
  * This class only handles the crawling of Wikipedia HTML pages. Other media types are ignored.
- * The actual behaviour is provided through the callback functions
  */
 final class HtmlCrawler extends WebCrawler {
 
-    private final static Pattern UNSUPPORTED_MEDIA_TYPES = Pattern.compile(".*(\\.(css|js|gif|jpg|png|mp3|mp4|zip|gz))$");
-
-    private final Predicate<String> doVisit;
     private final Consumer<WikipediaPage> visited;
 
-    public HtmlCrawler(Predicate<String> doVisit, Consumer<WikipediaPage> visited) {
+    public HtmlCrawler(Consumer<WikipediaPage> visited) {
         this.visited = Objects.requireNonNull(visited);
-        this.doVisit = Objects.requireNonNull(doVisit);
     }
 
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
         final String href = url.getURL().toLowerCase();
-        // FIXME(snorbi07): a more robust solution would be to match for types we are looking for, meaning HTML
-        return !UNSUPPORTED_MEDIA_TYPES.matcher(href).matches() && doVisit.test(href);
+        return WikipediaPage.isValidReferenceUrl(href);
     }
 
     @Override
@@ -53,11 +47,8 @@ final class HtmlCrawler extends WebCrawler {
 
         final Set<String> references =
                 links.stream()
-                        // ignore the links that contain unsupported types
-                        .filter(link -> !UNSUPPORTED_MEDIA_TYPES.matcher(link.getURL()).matches())
-                        // also ignore the ones that match for the provided custom logic
-                        .filter(link -> doVisit.test(link.getURL()))
                         .map(link -> link.getURL())
+                        .filter(WikipediaPage::isValidReferenceUrl)
                         .collect(Collectors.toCollection(HashSet::new));
         final String url = page.getWebURL().getURL();
 
