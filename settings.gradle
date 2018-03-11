@@ -1,6 +1,3 @@
 rootProject.name = 'wikiassist'
 
 include 'wikiassist-core'
-include 'wikiassist-crawler'
-
-
