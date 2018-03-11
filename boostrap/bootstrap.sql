@@ -15,7 +15,7 @@ CREATE VIEW `v_reference` AS
         AND (pagelinks.pl_title IS NOT NULL);
 
 # We 'materialize' it in order to further improve the access speed (eliminate sub-query and add indexing).
-# We also drop the empty titles and IDs, since those refere to the 'Create missing entry' page.
+# We also drop the empty titles and IDs, since those refer to the 'Create missing entry' page.
 DROP TABLE IF EXISTS `references`;
 CREATE TABLE `references` AS
   SELECT *
