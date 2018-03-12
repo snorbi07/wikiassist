@@ -1,13 +1,13 @@
 package com.norbertsram.wikiassist.model;
 
-final public class ReferenceEntry {
+final public class WikiReference {
 
     private final int pageId;
     private final String pageTitle;
     private final int pageReferenceId;
     private final String pageReferenceTitle;
 
-    public ReferenceEntry(int pageId, String pageTitle, int pageReferenceId, String pageReferenceTitle) {
+    public WikiReference(int pageId, String pageTitle, int pageReferenceId, String pageReferenceTitle) {
         this.pageId = pageId;
         this.pageTitle = pageTitle;
         this.pageReferenceId = pageReferenceId;

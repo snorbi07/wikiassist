@@ -1,25 +1,25 @@
 package com.norbertsram.wikiassist.dao;
 
 import com.norbertsram.wikiassist.dao.mapper.ReferenceEntryMapper;
-import com.norbertsram.wikiassist.model.ReferenceEntry;
+import com.norbertsram.wikiassist.model.WikiReference;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 import java.util.List;
 
-public interface ReferenceDao {
+public interface WikiReferenceDao {
 
     @SqlQuery("SELECT * FROM `references`")
     @RegisterRowMapper(ReferenceEntryMapper.class)
-    List<ReferenceEntry> fetchAll();
+    List<WikiReference> fetchAll();
 
     @SqlQuery("SELECT * FROM `references` WHERE page_id = :id")
     @RegisterRowMapper(ReferenceEntryMapper.class)
-    List<ReferenceEntry> fetchById(@Bind("id") int pageId);
+    List<WikiReference> fetchById(@Bind("id") int pageId);
 
     @SqlQuery("SELECT * FROM `references` WHERE page_title = :title")
     @RegisterRowMapper(ReferenceEntryMapper.class)
-    List<ReferenceEntry> fetchByTitle(@Bind("title") String pageTitle);
+    List<WikiReference> fetchByTitle(@Bind("title") String pageTitle);
 
 }
