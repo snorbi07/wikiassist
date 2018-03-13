@@ -23,8 +23,5 @@ applicationName = 'mainApp'
 applicationDefaultJvmArgs = ["-Xms4096m", "-Xmx8192m", "-Xss68m"]
 
 run {
-    args findProperty('wikiPages')
+    args = ["https://simple.wikipedia.org/wiki/Nothing"]
 }
-
-// Usage examples
-// gradle run -PwikiPages=Gerbils
