@@ -21,20 +21,14 @@ public final class CycleDetector {
     }
 
     public List<List<WikiPage>> find(String pageTitle) {
-        return find(pageTitle, false, false);
-    }
-
-    public Optional<List<WikiPage>> findFirst(String pageTitle) {
-        final List<List<WikiPage>> cycles = find(pageTitle, false, true);
-        if (cycles.isEmpty()) return Optional.empty();
-        return Optional.of(cycles.get(0));
+        return find(pageTitle, false);
     }
 
     public List<List<WikiPage>> findShortest(String pageTitle) {
-        return find(pageTitle, true, false);
+        return find(pageTitle, true);
     }
 
-    private List<List<WikiPage>> find(String pageTitle, boolean depthCheck, boolean findSingle) {
+    private List<List<WikiPage>> find(String pageTitle, boolean depthCheck) {
         detectedCycles.clear();
         lengthOfShortestCycle = Integer.MAX_VALUE;
 
@@ -44,15 +38,12 @@ public final class CycleDetector {
         final List<WikiPage> traversed = new ArrayList<>(DEFAULT_SIZE);
 
         wikiTraversal.depthFirstSearch(wikiPage, visited, traversed,
-                (n, t) -> this.doTraverse(pageTitle, n, t, depthCheck, findSingle));
+                (n, t) -> this.doTraverse(pageTitle, n, t, depthCheck));
 
         return detectedCycles;
     }
 
-    boolean doTraverse(String pageTitle, WikiPage node, List<WikiPage> traversed, boolean depthCheck, boolean findSingle) {
-        if (findSingle && !detectedCycles.isEmpty()) {
-            return false;
-        }
+    boolean doTraverse(String pageTitle, WikiPage node, List<WikiPage> traversed, boolean depthCheck) {
         if (!node.getTitle().equals(pageTitle)) {
             return true;
         }
