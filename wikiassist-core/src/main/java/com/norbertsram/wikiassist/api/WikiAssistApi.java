@@ -38,6 +38,8 @@ final public class WikiAssistApi {
     }
 
     public List<WikiPage> referencedPages(WikiPage page) {
+        // If a page does not have references it won't be in references adjacency list,
+        // thus we return an empty list (no references)
         return adjacencyList.getOrDefault(page, Collections.emptyList());
     }
 
