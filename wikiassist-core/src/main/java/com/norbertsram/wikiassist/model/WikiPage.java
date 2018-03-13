@@ -4,8 +4,8 @@ import java.util.Objects;
 
 final public class WikiPage {
 
-    final int pageId;
-    final String title;
+    private final int pageId;
+    private final String title;
 
     public WikiPage(int pageId, String title) {
         this.pageId = pageId;
@@ -31,5 +31,13 @@ final public class WikiPage {
     @Override
     public int hashCode() {
         return Objects.hash(getPageId());
+    }
+
+    @Override
+    public String toString() {
+        return "WikiPage{" +
+                "pageId=" + pageId +
+                ", title='" + title + '\'' +
+                '}';
     }
 }
