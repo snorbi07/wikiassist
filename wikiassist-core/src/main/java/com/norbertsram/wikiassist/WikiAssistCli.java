@@ -3,15 +3,11 @@ package com.norbertsram.wikiassist;
 import com.norbertsram.wikiassist.api.WikiAssistApi;
 import com.norbertsram.wikiassist.business.CycleDetector;
 import com.norbertsram.wikiassist.model.WikiPage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
 final public class WikiAssistCli {
-
-    private static final Logger LOG = LoggerFactory.getLogger(WikiAssistApi.class);
 
     public static void main(String[] args) {
         System.out.println("WikiAssistCli started!");
@@ -44,7 +40,7 @@ final public class WikiAssistCli {
             System.out.println("No cycles found.");
         }
         else {
-            cycles.stream().forEach(cycle -> System.out.println("Cycle: " + cycle.toString()));
+            cycles.forEach(cycle -> System.out.println("Cycle: " + cycle.toString()));
         }
 
         long endTime = System.currentTimeMillis();
@@ -55,7 +51,7 @@ final public class WikiAssistCli {
         return elapsedTime;
     }
 
-    public static String extractTitle(String url) {
+    private static String extractTitle(String url) {
         final String SIMPLE_WIKI_URL_PREFIX = "https://simple.wikipedia.org/wiki/";
         if (!url.startsWith(SIMPLE_WIKI_URL_PREFIX)) {
             throw new IllegalArgumentException("Invalid Wiki URL format, got: " + url);
