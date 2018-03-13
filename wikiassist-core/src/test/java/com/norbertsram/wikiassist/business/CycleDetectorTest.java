@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CycleDetectorTest {
 
-
     private WikiAssistApi api;
 
     @Before
@@ -75,7 +74,7 @@ public class CycleDetectorTest {
     @Test
     public void testFindSingleCycle() {
         final CycleDetector cd = new CycleDetector(api);
-        final List<List<WikiPage>> cycles = cd.search("A");
+        final List<List<WikiPage>> cycles = cd.find("A");
         assertTrue(cycles.size() == 1);
 
         final List<WikiPage> cycle = cycles.get(0);
@@ -92,7 +91,7 @@ public class CycleDetectorTest {
     @Test
     public void testFindMultipleCycles() {
         final CycleDetector cd = new CycleDetector(api);
-        final List<List<WikiPage>> cycles = cd.search("F");
+        final List<List<WikiPage>> cycles = cd.find("F");
         assertTrue(cycles.size() == 2);
 
         final List<WikiPage> cycle1 = cycles.get(0);
@@ -112,6 +111,28 @@ public class CycleDetectorTest {
         assertTrue(c2nodes.next().getTitle().equals("A"));
         assertTrue(c2nodes.next().getTitle().equals("I"));
         assertTrue(c2nodes.next().getTitle().equals("F"));
+    }
+
+    @Test
+    public void testDepthCheck() {
+        final CycleDetector cd = new CycleDetector(api);
+        final List<List<WikiPage>> cycles = cd.findShortest("F");
+        assertTrue(cycles.size() == 1);
+
+        final List<WikiPage> cycle1 = cycles.get(0);
+        assertTrue(cycle1.size() == 3);
+
+        final Iterator<WikiPage> c1nodes = cycle1.iterator();
+        assertTrue(c1nodes.next().getTitle().equals("F"));
+        assertTrue(c1nodes.next().getTitle().equals("D"));
+        assertTrue(c1nodes.next().getTitle().equals("F"));
+    }
+
+    @Test
+    public void testNoCycles() {
+        final CycleDetector cd = new CycleDetector(api);
+        final List<List<WikiPage>> cycles = cd.find("G");
+        assertTrue(cycles.size() == 0);
     }
 
 }

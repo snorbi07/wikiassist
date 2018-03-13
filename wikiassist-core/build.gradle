@@ -20,4 +20,11 @@ apply plugin: 'application'
 
 mainClassName = "com.norbertsram.wikiassist.WikiAssistCli"
 applicationName = 'mainApp'
-applicationDefaultJvmArgs = ["-Xms4096m", "-Xmx12288m"]
+applicationDefaultJvmArgs = ["-Xms4096m", "-Xmx8192m", "-Xss68m"]
+
+run {
+    args findProperty('wikiPages')
+}
+
+// Usage examples
+// gradle run -PwikiPages=Gerbils

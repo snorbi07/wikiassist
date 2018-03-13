@@ -2,27 +2,66 @@ package com.norbertsram.wikiassist;
 
 import com.norbertsram.wikiassist.api.WikiAssistApi;
 import com.norbertsram.wikiassist.business.CycleDetector;
+import com.norbertsram.wikiassist.model.WikiPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.List;
 
 final public class WikiAssistCli {
 
     private static final Logger LOG = LoggerFactory.getLogger(WikiAssistApi.class);
 
-
     public static void main(String[] args) {
-        LOG.info("WikiAssistCli started!");
+        System.out.println("WikiAssistCli started!");
 
+        if (args.length == 0) {
+            System.out.println("Please provide Simple Wiki page url(s)!");
+            return;
+        }
 
         final WikiPrefetch wikiPrefetch = new WikiPrefetch();
         final WikiAssistApi wikiAssistApi = new WikiAssistApi(wikiPrefetch.getPages(), wikiPrefetch.getReferences());
 
-        final CycleDetector cycleDetector = new CycleDetector(wikiAssistApi);
-        final String pageTitle = "Engineering";
-//        final boolean cycleFound = cycleDetector.breadthFirstSearch(pageTitle);
-//        LOG.info("Cycle detect status: {}, for page title: {}", cycleFound, pageTitle);
+        final long totalExecutionTime = Arrays.stream(args).map(WikiAssistCli::extractTitle)
+                .map(title -> process(title, wikiAssistApi))
+                .mapToLong(Long::valueOf).sum();
 
-        LOG.info("WikiAssistCli completed!");
+        System.out.println("Total execution took: " + totalExecutionTime + "ms");
+
+        System.out.println("WikiAssistCli completed!");
+    }
+
+    private static long process(String pageTitle, WikiAssistApi api) {
+        System.out.println("Starting cycle search for: " + pageTitle);
+        long startTime = System.currentTimeMillis();
+        final CycleDetector cycleDetector = new CycleDetector(api);
+        final List<List<WikiPage>> cycles = cycleDetector.findShortest(pageTitle);
+
+
+        if (cycles.isEmpty()) {
+            System.out.println("No cycles found.");
+        }
+        else {
+            cycles.stream().forEach(cycle -> System.out.println("Cycle: " + cycle.toString()));
+        }
+
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+
+        System.out.println("Cycle search for '" + pageTitle + "' took " + elapsedTime + "ms");
+
+        return elapsedTime;
+    }
+
+    public static String extractTitle(String url) {
+        final String SIMPLE_WIKI_URL_PREFIX = "https://simple.wikipedia.org/wiki/";
+        if (!url.startsWith(SIMPLE_WIKI_URL_PREFIX)) {
+            throw new IllegalArgumentException("Invalid Wiki URL format, got: " + url);
+        }
+
+        return url.substring(SIMPLE_WIKI_URL_PREFIX.length());
     }
 
 }

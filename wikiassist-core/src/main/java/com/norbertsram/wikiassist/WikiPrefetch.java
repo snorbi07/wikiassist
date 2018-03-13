@@ -23,6 +23,7 @@ class WikiPrefetch {
     private final List<WikiPage> pages;
 
     public WikiPrefetch() {
+        // TODO: yeah, I know...
         jdbi = Jdbi.create("jdbc:mariadb://localhost:3306/simplewiki", "root", "");
         jdbi.installPlugin(new SqlObjectPlugin());
 

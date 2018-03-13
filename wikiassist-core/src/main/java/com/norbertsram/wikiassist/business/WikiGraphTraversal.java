@@ -14,19 +14,14 @@ final class WikiGraphTraversal {
         this.api = Objects.requireNonNull(api);
     }
 
-    void depthFirstSearch(WikiPage page, List<WikiPage> traversed, BiPredicate<WikiPage, List<WikiPage>> doVisit) {
+    void depthFirstSearch(WikiPage page, Set<WikiPage> visited, List<WikiPage> traversed, BiPredicate<WikiPage, List<WikiPage>> doVisit) {
+        visited.add(page);
         traversed.add(page);
-
-        System.out.println("At: " + page.getTitle() + ", through: " + traversed.toString());
 
         final List<WikiPage> referencedPages = api.referencedPages(page);
         referencedPages.stream()
-                .filter(ref -> doVisit.test(ref, traversed) && !traversed.contains(ref))
-                .forEach(ref -> depthFirstSearch(ref, new ArrayList<>(traversed), doVisit));
-    }
-
-    void depthFirstSearch(WikiPage page, List<WikiPage> traversed) {
-        depthFirstSearch(page, traversed, (r, t) -> true);
+                .filter(ref -> doVisit.test(ref, traversed) && !visited.contains(ref))
+                .forEach(ref -> depthFirstSearch(ref, visited, new ArrayList<>(traversed), doVisit));
     }
 
 }
