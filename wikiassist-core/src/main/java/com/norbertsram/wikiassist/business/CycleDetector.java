@@ -3,36 +3,47 @@ package com.norbertsram.wikiassist.business;
 import com.norbertsram.wikiassist.api.WikiAssistApi;
 import com.norbertsram.wikiassist.model.WikiPage;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 
 public final class CycleDetector {
 
-    final WikiAssistApi api;
+    private final WikiAssistApi api;
+    private final WikiGraphTraversal wikiTraversal;
+
+    private List<List<WikiPage>> detectedCycles;
 
     public CycleDetector(WikiAssistApi api) {
         this.api = Objects.requireNonNull(api);
+        this.wikiTraversal = new WikiGraphTraversal(api);
+
+        detectedCycles = new ArrayList<>();
     }
 
-    public boolean breadthFirstSearch(String pageTitle) {
-        final int INITIAL_SIZE = 1024;
-        Queue<WikiPage> nodesToVisit = new ArrayDeque <>(INITIAL_SIZE);
-        nodesToVisit.addAll(api.referencedPages(pageTitle));
+    public List<List<WikiPage>> search(String pageTitle) {
+        detectedCycles.clear();
 
-        boolean found = false;
-        while (!nodesToVisit.isEmpty()) {
-            WikiPage current = nodesToVisit.poll();
+        final WikiPage wikiPage = api.byTitle(pageTitle);
+        final int DEFAULT_DEPTH = 256;
+        final List<WikiPage> visited = new ArrayList<>(DEFAULT_DEPTH);
 
-            if (current.getTitle().equals(pageTitle)) {
-                found = true;
-                break;
-            }
+        wikiTraversal.depthFirstSearch(wikiPage, visited,
+                (node, traversed) -> this.doTraverse(pageTitle, node, traversed));
 
-            nodesToVisit.addAll(api.referencedPages(current));
+        return detectedCycles;
+    }
+
+    boolean doTraverse(String pageTitle, WikiPage node, List<WikiPage> traversed) {
+        if (!node.getTitle().equals(pageTitle)) {
+            return true;
         }
+        System.out.println("Found it: " + traversed.toString());
 
-        return found;
+        final List<WikiPage> cycle = new ArrayList<>(traversed);
+        cycle.add(node);
+        detectedCycles.add(cycle);
+        return false;
     }
 
 }

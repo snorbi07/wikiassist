@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -61,8 +62,10 @@ public class CycleDetectorTest {
         references.add(ref54);
         references.add(ref53);
 
+        WikiReference ref35 = new WikiReference(page3.getPageId(), page3.getTitle(), page5.getPageId(), page5.getTitle());
         WikiReference ref31 = new WikiReference(page3.getPageId(), page3.getTitle(), page1.getPageId(), page1.getTitle());
         WikiReference ref30 = new WikiReference(page3.getPageId(), page3.getTitle(), page0.getPageId(), page0.getTitle());
+        references.add(ref35);
         references.add(ref31);
         references.add(ref30);
 
@@ -70,10 +73,45 @@ public class CycleDetectorTest {
     }
 
     @Test
-    public void testCycleDetection() {
-        CycleDetector cd = new CycleDetector(api);
-        final boolean found = cd.breadthFirstSearch("A");
-        assertTrue(found == true);
+    public void testFindSingleCycle() {
+        final CycleDetector cd = new CycleDetector(api);
+        final List<List<WikiPage>> cycles = cd.search("A");
+        assertTrue(cycles.size() == 1);
+
+        final List<WikiPage> cycle = cycles.get(0);
+        assertTrue(cycle.size() == 5);
+
+        final Iterator<WikiPage> nodes = cycle.iterator();
+        assertTrue(nodes.next().getTitle().equals("A"));
+        assertTrue(nodes.next().getTitle().equals("I"));
+        assertTrue(nodes.next().getTitle().equals("F"));
+        assertTrue(nodes.next().getTitle().equals("D"));
+        assertTrue(nodes.next().getTitle().equals("A"));
+    }
+
+    @Test
+    public void testFindMultipleCycles() {
+        final CycleDetector cd = new CycleDetector(api);
+        final List<List<WikiPage>> cycles = cd.search("F");
+        assertTrue(cycles.size() == 2);
+
+        final List<WikiPage> cycle1 = cycles.get(0);
+        assertTrue(cycle1.size() == 3);
+
+        final Iterator<WikiPage> c1nodes = cycle1.iterator();
+        assertTrue(c1nodes.next().getTitle().equals("F"));
+        assertTrue(c1nodes.next().getTitle().equals("D"));
+        assertTrue(c1nodes.next().getTitle().equals("F"));
+
+        final List<WikiPage> cycle2 = cycles.get(1);
+        assertTrue(cycle2.size() == 5);
+
+        final Iterator<WikiPage> c2nodes = cycle2.iterator();
+        assertTrue(c2nodes.next().getTitle().equals("F"));
+        assertTrue(c2nodes.next().getTitle().equals("D"));
+        assertTrue(c2nodes.next().getTitle().equals("A"));
+        assertTrue(c2nodes.next().getTitle().equals("I"));
+        assertTrue(c2nodes.next().getTitle().equals("F"));
     }
 
 }
