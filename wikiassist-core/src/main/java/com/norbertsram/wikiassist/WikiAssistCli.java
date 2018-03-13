@@ -19,8 +19,8 @@ final public class WikiAssistCli {
 
         final CycleDetector cycleDetector = new CycleDetector(wikiAssistApi);
         final String pageTitle = "Engineering";
-        final boolean cycleFound = cycleDetector.breadthFirstSearch(pageTitle);
-        LOG.info("Cycle detect status: {}, for page title: {}", cycleFound, pageTitle);
+//        final boolean cycleFound = cycleDetector.breadthFirstSearch(pageTitle);
+//        LOG.info("Cycle detect status: {}, for page title: {}", cycleFound, pageTitle);
 
         LOG.info("WikiAssistCli completed!");
     }

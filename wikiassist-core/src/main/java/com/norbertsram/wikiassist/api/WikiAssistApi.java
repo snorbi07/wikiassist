@@ -30,11 +30,14 @@ final public class WikiAssistApi {
 
     // By design we return an empty reference list for not existing pages
     public List<WikiPage> referencedPages(String pageTitle) {
+        final WikiPage wikiPage = byTitle(pageTitle);
+        return referencedPages(wikiPage);
+    }
+
+    public WikiPage byTitle(String pageTitle) {
         // Wikipedia replaces empty spaces with underscores in title names
         final String wikiPageTitleRepresentation = pageTitle.replaceAll(" ", "_");
-        final WikiPage wikiPage = byTitle.get(wikiPageTitleRepresentation);
-
-        return referencedPages(wikiPage);
+        return byTitle.get(wikiPageTitleRepresentation);
     }
 
     public List<WikiPage> referencedPages(WikiPage page) {
